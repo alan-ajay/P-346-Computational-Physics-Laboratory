@@ -26,3 +26,20 @@ class MyComplex():
     
     def mod_cmplx(self):
         return np.sqrt(self.r**2+self.i**2)
+    
+class random():
+
+    def __init__(self, seed, a = 1103515245, c = 12345, m = 32768):
+        self.a = a
+        self.c = c
+        self.m = m   
+        self.seed = seed
+
+    def rand_list(self):
+        x = self.seed
+        list = []
+        for i in range(self.N):
+            x = (self.a*x + self.c)%self.m
+            list.append(x/self.m)
+        return list  
+
