@@ -36,7 +36,7 @@ def Id(n):
         X[i][i] = 1
     return X
 
-#Creating Augmented matrix
+#Creating Inverse Augmented matrix
 def Augment_inv(A):
     n = len(A)          # number of rows
     X = Id(n)            # identity matrix
