@@ -191,6 +191,7 @@ class LinAlg:
         return [row[n:] for row in Aug]
 
 class Linsolve:
+
     def bisection(f, guess, e = 1e-6):
         interval = guess
         count = 0
@@ -263,3 +264,23 @@ class Linsolve:
             x0, x = x, g(x)
             if abs(x - x0) < e:
                     return x, count                              
+            
+class Integrate:  
+    @staticmethod
+    def Midpoint(f, a, b, n):
+        h = (b-a)/n
+        sum = 0
+        for i in range(n):
+            xn = a + (2*i+1)*h/2
+            sum += h * f(xn)
+        return sum
+
+    @staticmethod
+    def Trapezoid(f, a, b, n):
+        h = (b-a)/n
+        sum = f(a)
+        for i in range(1, n):
+            xn = a + i*h
+            sum += 2*f(xn)
+
+        return h*(sum+f(b))/2
