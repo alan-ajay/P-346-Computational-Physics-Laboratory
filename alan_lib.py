@@ -36,13 +36,23 @@ def iter_seq(c, seed,n = 10000):
         seq.append(x)
     return seq
 
-def LCG_rand_list(self, N):
-        x = self.seed
-        list = []
-        for i in range(N):
-            x = (self.a*x + self.c)%self.m
-            list.append(x/self.m)
-        return list  
+
+def lcg_rng(n,x0,a = 1103515245,c = 12345,m = 32768 ,range=None):
+    out=[]
+    i=0
+    tempx=x0
+    while i<=n:
+        temp=(a*tempx + c)%m
+        tempx=temp
+        out.append(tempx)
+        i+=1
+    if range==None:
+        return out
+    else:
+        d=range[1]-range[0]
+        templ=[i/m for i in out]
+        out2=[range[0] + d*x for x in templ]
+        return out2 
 
 class LinAlg:
 
@@ -266,7 +276,6 @@ class Linsolve:
                     return x, count                              
             
 class Integrate:  
-    @staticmethod
     def Midpoint(f, a, b, n):
         h = (b-a)/n
         sum = 0
@@ -275,7 +284,6 @@ class Integrate:
             sum += h * f(xn)
         return sum
 
-    @staticmethod
     def Trapezoid(f, a, b, n):
         h = (b-a)/n
         sum = f(a)
@@ -284,3 +292,26 @@ class Integrate:
             sum += 2*f(xn)
 
         return h*(sum+f(b))/2
+
+    def Simpson(f, a, b, n):
+            h = (b-a)/n
+            sum = f(a)
+            for i in range(1, n):
+                xn = a + i*h
+                if i%2 == 0:
+                    sum += 2*f(xn)
+                else:
+                    sum += 4*f(xn)
+                        
+
+            return h*(sum+f(b))/3
+    
+    def Montecarlo(f, a, b, n):
+        L = lcg_rng(n, x0=0.1, range=[a,b])
+        h = (b-a)/n
+        sum1, sum2 = 0, 0
+        for xi in L:
+            sum1 += f(xi)
+            sum2 += f(xi)**2
+        var = sum2/n - (sum1/n)**2
+        return h*(sum1), var    
