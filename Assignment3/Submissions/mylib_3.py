@@ -118,7 +118,7 @@ def row_swap(A, i, j):
 
 def Gauss_Seidel(A, b, e = 1e-6):
     n = len(A)
-    x = np.zeros(n)
+    x = [0 for i in range(n)]
     stop = 1
     count = 0
     while stop == True:

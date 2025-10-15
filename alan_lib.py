@@ -108,6 +108,29 @@ class LinAlg:
         b = [Aug[i][n] for i in range(n)]                
         return {"Augmented Matrix": Aug, "Solution": b}  
 
+    def Gauss_Seidel(A, b, e = 1e-6):
+        n = len(A)
+        x = [0 for i in range(n)]
+        stop = 1
+        count = 0
+        while stop == True:
+            sum = 0
+            for i in range(n):
+                xi = x[i]
+                sum1, sum2 = 0, 0
+                for j in range(i):
+                    sum1 += A[i][j]*x[j]
+                for j in range(i+1, n):
+                    sum2 += A[i][j]*x[j]
+                x[i] = (b[i] - sum1 - sum2)/A[i][i]
+                delxi = (xi - x[i])**2
+                sum += delxi
+            d = np.sqrt(sum)
+            if d < e:
+                stop = False
+            count += 1    
+        return x, count    
+
     # ---------------- Products ----------------
     @staticmethod
     def dot(c, d):
@@ -158,6 +181,14 @@ class LinAlg:
         return x
 
     # ---------------- Utility ----------------
+    def read_matrix(filename):
+        with open(filename, 'r') as f:
+            matrix = []
+            for line in f:
+                row = [float(num) for num in line.strip().split()]
+                matrix.append(row)
+        return matrix
+
     @staticmethod
     def vecfunc(g, x):
         return [f(x) for f in g]
