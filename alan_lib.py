@@ -346,3 +346,28 @@ class Integrate:
             sum2 += f(xi)**2
         var = sum2/n - (sum1/n)**2
         return h*(sum1), var    
+    
+    def gaussian_quad(n, f, a, b):
+        roots, weights = np.polynomial.legendre.leggauss(n)
+        int = [float(weights[i])*float(f(((b-a)/2)*roots[i]+((b+a)/2))) for i in range(n)]
+        return ((b-a)/2)*sum(int)
+    
+    def gaussian_quad_accur(f, val, accur, a, b):
+        n = 1
+        while True:
+            int = Integrate.gaussian_quad(n, f, a, b)
+            if abs(int-val)<=accur:
+                return int, n
+                break
+            else:
+                n+=1    
+
+    def simpson_accur(f, a, b, val, accur):
+        n = 2
+        while True:
+            int = Integrate.Simpson(f, a, b, n)
+            if abs(int-val)<=accur:
+                return int, n
+                break
+            else:
+                n+=2                
