@@ -371,3 +371,28 @@ class Integrate:
                 break
             else:
                 n+=2                
+
+    def Euler_Forward(f, range, y0, h = 0.1):
+        x, y, x_max = range[0], y0, range[1]
+        x_vals = [x]
+        y_vals = [y]
+        while x < x_max:
+            y += h*f(y, x)
+            x += h
+            y_vals.append(y)
+            x_vals.append(x)
+        return x_vals, y_vals
+
+    def Predictor_corrector(f, range, y0, h = 0.1):
+        x, y, x_max = range[0], y0, range[1]
+        x_vals = [x]
+        y_vals = [y]
+        while x < x_max:
+            k1 = h*f(y, x)
+            yp = y + k1
+            k2 = h*f(yp, x+h)
+            y += (k1+k2)/2
+            x += h
+            y_vals.append(y)
+            x_vals.append(x)
+        return x_vals, y_vals                
