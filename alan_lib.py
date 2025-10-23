@@ -396,3 +396,68 @@ class Integrate:
             y_vals.append(y)
             x_vals.append(x)
         return x_vals, y_vals                
+
+    # def X_dot(F, X, t):
+    #     return np.array([f(X, t) for f in F])
+
+
+    # def Predictor_corrector_list(F, range, X0, h = 0.1):
+    #         t, X, t_max = range[0], X0, range[1]
+    #         t_vals = [t]
+    #         X_vals = [X]
+    #         while t < t_max:
+    #             k1 = h*X_dot(F, X, t)
+    #             Xp = X + k1
+    #             k2 = h*X_dot(F, Xp+h, t)
+    #             X += (k1+k2)/2
+    #             t += h
+    #             X_vals.append(X)
+    #             t_vals.append(t)
+    #         return t_vals, X_vals                
+    # t, x = Predictor_corrector(F, [0, 40], [1, 0])
+
+    def rk4_step(x, y, x_dot, y_dot, h):
+        k1 = x_dot(x, y)
+        l1 = y_dot(x, y)
+
+        k2 = x_dot(x + 0.5 * h * k1, y + 0.5 * h * l1)
+        l2 = y_dot(x + 0.5 * h * k1, y + 0.5 * h * l1)
+
+        k3 = x_dot(x + 0.5 * h * k2, y + 0.5 * h * l2)
+        l3 = y_dot(x + 0.5 * h * k2, y + 0.5 * h * l2)
+
+        k4 = x_dot(x + h * k3, y + h * l3)
+        l4 = y_dot(x + h * k3, y + h * l3)
+
+        K = (k1 + 2 * k2 + 2 * k3 + k4) / 6
+        L = (l1 + 2 * l2 + 2 * l3 + l4) / 6
+
+        x += K * h
+        y += L * h
+
+        return x, y
+    
+    def Runge_kutta_2d(x_dot, y_dot, range, init, h = 0.1):
+        x, y, t0, t_max = init[0], init[1], range[0], range[1]
+        x_vals, y_vals = [x], [y]
+        t_vals = np.arange(t0, t_max, h)
+        for _ in t_vals[1:]:
+            x, y = Integrate.rk4_step(x, y, x_dot, y_dot, h)
+            x_vals.append(x)
+            y_vals.append(y)
+        return x_vals, y_vals, t_vals      
+
+    def Runge_kutta(f, range, y0, h = 0.1):
+            x, y, x_max = range[0], y0, range[1]
+            x_vals = [x]
+            y_vals = [y]
+            while x < x_max:
+                k1 = h*f(y, x)
+                k2 = h*f(y + k1/2, x+h/2)
+                k3 = h*f(y + k2/2, x+h/2)
+                k4 = h*f(y + k3, x+h)
+                y += (k1+2*k2+2*k3+k4)/6
+                x += h
+                y_vals.append(y)
+                x_vals.append(x)
+            return x_vals, y_vals
