@@ -461,3 +461,52 @@ class Integrate:
                 y_vals.append(y)
                 x_vals.append(x)
             return x_vals, y_vals
+
+    def shooting(x_dot, y_dot, guess, boundary, range):#boundary = [start, end], range = [t0, tf]
+        end = boundary[1]
+        init = [boundary[0], guess]
+        x, y, t = Integrate.Runge_kutta_2d(x_dot, y_dot, range, init)
+        return x[-1]
+
+    def BVP(x_dot, y_dot, guess, boundary, range):
+        start, end, gl, gh = boundary[0], boundary[1], guess[0], guess[1]
+        init = [start, gl]
+        x1, y1, t1 = Integrate.Runge_kutta_2d(x_dot, y_dot, range, init)
+        init = [start, gh]
+        x2, y2, t2 = Integrate.Runge_kutta_2d(x_dot, y_dot, range, init)
+        end_l, end_h = x1[-1], x2[-1]
+        guess_new = gl + (gh - gl)*(end-end_l)/(end_h - end_l)
+        init = [start, guess_new]
+        x, y, t = Integrate.Runge_kutta_2d(x_dot, y_dot, range, init)
+        return {'new_guess' : guess_new, 
+        'overestimate' : (x2, y2, t2), 
+        'underestimate': (x1, y1, t1),
+        'solution':(x, y, t)}
+
+    def forward_matrix(n, a):
+            X = [[0]*n for _ in range(n)]
+            for i in range(n):
+                X[i][i] = 1 - 2*a
+                if i < n-1:
+                    X[i][i+1] = a
+                if i > 0:
+                    X[i][i-1] = a 
+            return X
+       
+    def PDE_solve(u0, boundary, N, hx=0.05, ht=0.0005):
+        start, end = boundary
+        n = int(((end-start)/hx)+1)
+        x_vals = [start + i*hx for i in range(n)]
+        v = [u0(x) for x in x_vals]
+        a = ht / hx**2
+        A = Integrate.forward_matrix(n, a)
+        soln = [v.copy()]
+
+        for i in range(N):
+            v[0], v[-1] = 0, 0           # enforce BC before
+            v = LinAlg.matvec(A, v)      # matrix multiply
+            v[0], v[-1] = 0, 0           # enforce BC after
+            soln.append(v.copy())
+
+        return soln, x_vals
+        
