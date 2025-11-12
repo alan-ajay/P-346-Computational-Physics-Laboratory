@@ -510,3 +510,40 @@ class Integrate:
 
         return soln, x_vals
         
+class LinReg:
+    def lagrange_interpolation(init, x):#init = [(x0, y0)]
+        n = len(init)
+        sum = 0
+        for i in range(n):
+            prod = 1
+            for k in range(n):
+                if k != i:
+                    prod *= (x-init[k][0])/(init[i][0]-init[k][0])
+            sum += prod*init[i][1]
+        return sum
+
+    def least_square_fit(init,s):
+        n = len(init)
+        S, Sx, Sy, Sxx, Sxy, Syy = 0, 0, 0, 0, 0, 0
+        for i in range(n):
+            h, xi, yi  = 1/s[i]**2, init[i][0], init[i][1]
+            S += h
+            Sx += h*xi
+            Sxx += h*xi**2
+            Sy += yi*h
+            Sxy += xi*yi*h
+            Syy += h*yi**2
+        delta = S*Sxx - Sx**2
+        a1, a2 = (Sxx*Sy - Sx*Sxy)/delta, (Sxy*S - Sx*Sy)/delta
+        r2 = Sxy**2/(Sxx*Syy)
+        return a1, a2, r2
+
+    def ln_tuple(data, type):# type- 1 = log-log , 2 = x-log
+        L = []
+        if type == 1:
+            for x in data:
+                L.append((np.log(x[0]), np.log(x[1])))
+        if type == 2:
+            for x in data:
+                L.append((x[0], np.log(x[1])))        
+        return L            
